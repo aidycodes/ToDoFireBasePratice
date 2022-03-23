@@ -1,24 +1,18 @@
-import logo from './logo.svg';
+import './index.css'
 import './App.css';
 
-function App() {
+import AppRoutes from './routes';
+import { ProvideAuth } from "./firebase/use-auth.js";
+
+
+function App(props) {
   return (
+    <ProvideAuth>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      
+        <AppRoutes/>
     </div>
+    </ProvideAuth>
   );
 }
 
