@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Avatar from '@mui/material/Avatar'
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import { Link, Navigate } from 'react-router-dom'
@@ -14,6 +14,9 @@ const UserNav = () => {
      const authPath = getAuth()
      const auth = useAuth()
      
+     useEffect(() => {
+        console.log('HERE HERE LOOK')
+     },[auth.user.photoURL])
 
     const handleSignOut = async() => {    
     try{

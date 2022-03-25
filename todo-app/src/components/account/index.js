@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Input, Button, CircularProgress } from '@mui/material'
+import { Input, Button, CircularProgress, TextField, FormHelperText, FormControl  } from '@mui/material'
 
 import * as yup from 'yup'
-import { useFormik } from 'formik'
+import { Form, useFormik } from 'formik'
 
 
 import { useAuth } from '../../firebase/use-auth'
@@ -16,13 +16,14 @@ const initVals = {
 displayName: '',
        email:'',
        password:'',
-       imageUrl: '',
+       photoURL: 'te',
 }
 
 const EditAccount = () => {
 
 
-    const [file, setFile ] = useState('')   
+    const [file, setFile ] = useState('')  
+   const [ hotfix, sethotfix ] = useState(false)
     const [ formVals, setFormVals ] = useState(initVals)
     const [ newpassword, setNewpassword ] = useState({password:'',passwordCheck:'', loading:false})
     const [open, setOpen] = useState(false);
@@ -59,26 +60,32 @@ const EditAccount = () => {
          displayName:yup.string(),
          email:yup.string().required('Email Required'),
          password:yup.string(),
-         photoUrl:yup.string()
+        
 
      }),
      onSubmit: values => {
+        
          if(formik.values.displayName !== auth.user.displayName){
-     handleSubmitDisplayName(values)
+     handleSubmit(values, 'displayName')
          }
         if(formik.values.displayName !== auth.user.email){
             handleSubmitEmailChange(values)
         }
+        if(formik.values.photoURL !== auth.user.photoURL){
+     handleSubmit(values, 'photoURL')
+         }
 
      },
    });
-
+console.log(auth, 'jjj')
 
 const handleFile = (e) => {
     setFile(e.target.value)
 }
 
-const handleSubmitDisplayName = async(values) => {
+const handleSubmit = async(values, field) => {
+console.log(field, values)
+if(field === 'displayName'){
     try{
     const auth2 = getAuth();
 const updateawait = await updateProfile(auth2.currentUser, {
@@ -87,7 +94,24 @@ const updateawait = await updateProfile(auth2.currentUser, {
     console.log('success')
 }catch(error){
     console.log(error)
-}}
+}
+    }
+if(field === 'photoURL'){
+    try{
+        console.log('hello')
+    const auth2 = getAuth();
+const updateawait = await updateProfile(auth2.currentUser, {
+    photoURL:values.photoURL}
+)
+    console.log('success')
+    sethotfix(!hotfix)
+}catch(error){
+    console.log(error)
+}
+    }
+}
+
+
 
 const handleSubmitEmailChange = async(values) => {
     try{
@@ -114,7 +138,7 @@ const handleSubmitPasswordChange = async(password) => {
 
     const updateUserForm = () => {
         if (auth.user){
-            setFormVals({displayName:auth.user.displayName, email:auth.user.email, password:"", photoUrl:''})
+            setFormVals({displayName:auth.user.displayName, email:auth.user.email, password:"", photoURL:auth.user.photoURL})
         }
     }
 
@@ -152,7 +176,10 @@ const handleSubmitPasswordChange = async(password) => {
              
         </div>
         <div className="" id="right">
-            <Input id="email"  name="email" {...formik.getFieldProps('email')}    type="text"/>    
+            <FormControl>
+            <Input id="email"  name="email" {...formik.getFieldProps('email')} error={formik.errors.email && formik.touched.email}  type="text"/> 
+            {formik.errors.email ? <FormHelperText  error>{formik.errors.email}</FormHelperText> : <FormHelperText style={{padding:'0.63rem'}}></FormHelperText>}    
+            </FormControl>
         </div>
         
         </div>
